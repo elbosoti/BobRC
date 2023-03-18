@@ -13,7 +13,7 @@ ClientSock.bind(server_ip)
 def receivearray():
     ClientSock.listen(1)
     conn, addr = ClientSock.accept()
-    data = conn.recvfrom(1024000)
+    data = conn.recv(1024000)
     img = Image.frombytes('RGB', (320,180), data)
     img.show()
     print(data)
