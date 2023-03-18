@@ -29,7 +29,7 @@ def send_video():
     arraybinary = arraydata.tobytes()
     # picturedata = picam2.capture_image()
     print("sending array: ", len(arraybinary))
-    CarSock.sendall(arraydata)
+    CarSock.sendall(arraybinary)
 
 def receive_controls():
     while True:
