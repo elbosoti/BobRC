@@ -2,6 +2,7 @@ import socket
 import time
 import RPi.GPIO as GPIO
 
+import BobRC
 from picamera2 import Picamera2, Preview 
 from picamera2.encoders import H264Encoder
 from picamera2.outputs import FileOutput
@@ -18,15 +19,14 @@ print("server port bound")
 
 def send_video():
     picam2 = Picamera2()
-    video_config = picam2.create_preview_configuration({"size": (640, 360)})
+    video_config = picam2.create_preview_configuration({"size": (320, 180)})
     picam2.configure(video_config)
-    encoder = H264Encoder(1000000)
-    while(True):
-        CarSock.connect(clientAddress)
-        stream = sock.makefile("wb")
-        picam2.start_recording(encoder, FileOutput(stream))
-        time.sleep(20)
-        picam2.stop_recording()
+    picam2.start()
+    time.sleep(1)
+    arraydata = picam2.capture_array()
+    # picturedata = picam2.capture_image()
+    print("sending array")
+    CarSock.sendto(arraydata, clientAddress)
 
 def receive_controls():
     while True:
@@ -41,3 +41,4 @@ def receive_controls():
 
 if (__name__ == "__main__"):
     send_video()
+    
