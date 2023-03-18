@@ -1,4 +1,4 @@
-import socket,threading,time,sys, pygame
+import socket
 from PIL import Image
 import BobRC
 
@@ -11,7 +11,9 @@ ClientSock.bind(server_ip)
 
 
 def receivearray():
-    data = ClientSock.recvfrom(1024000)
+    ClientSock.listen(1)
+    conn, addr = ClientSock.accept()
+    data = conn.recvfrom(1024000)
     img = Image.frombytes('RGB', (320,180), data)
     img.show()
     print(data)
