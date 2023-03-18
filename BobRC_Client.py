@@ -46,5 +46,4 @@ def receivearray():
 
 
 if __name__ == "__main__":
-    #receivearray()
-    BobRC.test()
+    receivearray()
