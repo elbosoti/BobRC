@@ -16,7 +16,7 @@ def receivearray():
     ClientSock.listen(1)
     conn, addr = ClientSock.accept()
     data = conn.recv
-    imgdata = eval(data.decode())
+    imgdata = eval(data.decode('utf-8'))
     cv2.imshow("test", imgdata)
 
 

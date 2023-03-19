@@ -29,7 +29,7 @@ def send_video():
     CarSock.connect(clientAddress)
     arraydata = picam2.capture_array()
     arraybinary = str(arraydata).encode()
-    print("arraydata", str(arraydata)[0:10])
+    print("arraydata", len(arraybinary))
     #picturedata = picam2.capture_image()
     # picturebinary = picturedata.tobytes()
     #print("sending array: ", len(picturebinary))
