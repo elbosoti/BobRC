@@ -27,14 +27,14 @@ def send_video():
     buffer = io.BytesIO()
     time.sleep(1)
     CarSock.connect(clientAddress)
-    #arraydata = picam2.capture_array()
-    #arraybinary = arraydata.tobytes()
+    arraydata = picam2.capture_array()
+    arraybinary = arraydata.tobytes()
+    print(arraydata)
     #picturedata = picam2.capture_image()
     # picturebinary = picturedata.tobytes()
     #print("sending array: ", len(picturebinary))
-    #CarSock.sendall(picturebinary)
-    picam2.capture_file(buffer, format="jpeg")
-    print("amount of bytes:", CarSock.sendfile(buffer))
+    #CarSock.sendall(arraydata)
+
 
 
 if (__name__ == "__main__"):
