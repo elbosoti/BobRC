@@ -26,14 +26,14 @@ def send_video():
     picam2.start()
     buffer = io.BytesIO()
     time.sleep(1)
-    #CarSock.connect(clientAddress)
+    CarSock.connect(clientAddress)
     arraydata = picam2.capture_array()
-    arraybinary = arraydata.tobytes()
+    arraybinary = str(arraydata).encode()
     print("arraydata", str(arraydata)[0:10])
     #picturedata = picam2.capture_image()
     # picturebinary = picturedata.tobytes()
     #print("sending array: ", len(picturebinary))
-    #CarSock.sendall(arraydata)
+    CarSock.sendall(arraybinary)
 
 
 
