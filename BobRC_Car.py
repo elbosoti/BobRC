@@ -1,6 +1,7 @@
 import socket
 import time
 import RPi.GPIO as GPIO
+import io
 
 import BobRC
 from picamera2 import Picamera2, Preview 
@@ -23,24 +24,17 @@ def send_video():
     video_config = picam2.create_preview_configuration({"size": (320, 180)})
     picam2.configure(video_config)
     picam2.start()
+    buffer = io.BytesIO()
     time.sleep(1)
     CarSock.connect(clientAddress)
     #arraydata = picam2.capture_array()
     #arraybinary = arraydata.tobytes()
-    picturedata = picam2.capture_image()
-    picturebinary = picturedata.tobytes()
-    print("sending array: ", len(picturebinary))
-    CarSock.sendall(picturebinary)
-
-def receive_controls():
-    while True:
-        message = CarSock.recvfrom(1024)[0].decode()
-        if (message[0] == "C"):
-            controls = message.split()
-            print("going", controls[1], controls[2])
-            
-    return
-
+    #picturedata = picam2.capture_image()
+    # picturebinary = picturedata.tobytes()
+    #print("sending array: ", len(picturebinary))
+    #CarSock.sendall(picturebinary)
+    picam2.capture_file(buffer, format="jpeg")
+    print("amount of bytes:", CarSock.sendfile(buffer))
 
 
 if (__name__ == "__main__"):
