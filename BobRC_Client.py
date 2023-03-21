@@ -12,6 +12,7 @@ ClientSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP Route
 ClientSock.bind(server_ip)
 
 
+
 def receivearray():
     ClientSock.listen(1)
     conn, addr = ClientSock.accept()
