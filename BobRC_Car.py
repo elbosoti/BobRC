@@ -28,15 +28,16 @@ def send_video():
     buffer = io.BytesIO()
     time.sleep(1)
     CarSock.connect(clientAddress)
-    arraydata = picam2.capture_array()
-    img = cv2.resize(arraydata, (320, 180))
-    img=img.reshape(tiley,int(img.shape[0]/tiley),tilex,int(img.shape[1]/tilex),3).swapaxes(1,2)
-    for id_img_row, img_row in enumerate(img):
-        for id_img_tile, img_tile in enumerate(img_row):
-            webp_image = (cv2.imencode('.webp',img_tile,[int(cv2.IMWRITE_WEBP_QUALITY),90])[1])
-            udp_packages = numpy.array_split(webp_image,len(webp_image)/500+1) #split into 500 byte chunks
-            for package in udp_packages:
-                CarSock.send((id_img_tile+id_img_row*4).to_bytes(1,'big')+package.tobytes())
+    while True:
+        arraydata = picam2.capture_array()
+        img = cv2.resize(arraydata, (320, 180))
+        img=img.reshape(tiley, int(img.shape[0]/tiley), tilex, int(img.shape[1]/tilex), 4).swapaxes(1,2)
+        for id_img_row, img_row in enumerate(img):
+            for id_img_tile, img_tile in enumerate(img_row):
+                webp_image = (cv2.imencode('.webp',img_tile,[int(cv2.IMWRITE_WEBP_QUALITY),90])[1])
+                udp_packages = numpy.array_split(webp_image,len(webp_image)/500+1) #split into 500 byte chunks
+                for package in udp_packages:
+                    CarSock.send((id_img_tile+id_img_row*4).to_bytes(1,'big')+package.tobytes())
 
     arraybinary = str(arraydata).encode()
     print("arraydata", len(arraybinary))
