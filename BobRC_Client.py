@@ -7,17 +7,17 @@ import cv2, numpy
 server_ip = ('0.0.0.0',12000)
 car_ip = ('0.0.0.0',12001)
 
-ClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP Route
-ClientSock.bind(server_ip)
+client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP Route
+client_sock.bind(server_ip)
 
 
 
-def receivearray():
+def receive_array():
     img = bytearray()
     np_tile = [numpy.empty((90,80,3),dtype=numpy.uint8)]*8
     pervious_index = 0
     while True:
-        package = ClientSock.recvfrom(65536)[0]
+        package = client_sock.recvfrom(65536)[0]
         index = int.from_bytes(package[:1],'big')
         if index < 8:
             if pervious_index != index:#new tile
@@ -37,6 +37,16 @@ def receivearray():
             img = img + package[1:]
 
 
+def receive_video():
+    img_str = b''
+    while True:
+        package = client_sock.recvfrom(65536)[0]
+        img_str += package
+        if len(img_str) == 230400:
+            frame = numpy.fromstring(img_str, dtype=numpy.uint8)
+            frame = frame.reshape (320,180,4)
+            cv2.imshow('BobRc',frame)
+            img_str = b''
 
 if __name__ == "__main__":
-    receivearray()
+    receive_video()
