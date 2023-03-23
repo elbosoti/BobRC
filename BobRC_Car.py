@@ -10,8 +10,8 @@ import cv2, numpy
 clientAddress = ("10.14.1.50", 12000)
 address = ("0.0.0.0", 12001)
 #GPIO.setmode(GPIO.BOARD) # Set pin mode to Board across entire program
-# CarSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Global Socket variable
-CarSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Global Socket variable
+CarSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Global Socket variable
+# CarSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Global Socket variable
 # CarSock.bind(address)
 print("server port bound")
 
@@ -27,7 +27,7 @@ def send_video():
     picam2.start()
     buffer = io.BytesIO()
     time.sleep(1)
-    CarSock.connect(clientAddress)
+    # CarSock.connect(clientAddress)
     while True:
         arraydata = picam2.capture_array()
         img = cv2.resize(arraydata, (320, 180))
@@ -37,14 +37,8 @@ def send_video():
                 webp_image = (cv2.imencode('.webp',img_tile,[int(cv2.IMWRITE_WEBP_QUALITY),90])[1])
                 udp_packages = numpy.array_split(webp_image,len(webp_image)/500+1) #split into 500 byte chunks
                 for package in udp_packages:
-                    CarSock.send((id_img_tile+id_img_row*4).to_bytes(1,'big')+package.tobytes())
+                    CarSock.sendto((id_img_tile+id_img_row*4).to_bytes(1,'big')+package.tobytes(), clientAddress)
 
-    arraybinary = str(arraydata).encode()
-    print("arraydata", len(arraybinary))
-    #picturedata = picam2.capture_image()
-    # picturebinary = picturedata.tobytes()
-    #print("sending array: ", len(picturebinary))
-    CarSock.sendall(arraybinary)
 
 
 
