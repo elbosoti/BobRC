@@ -7,20 +7,17 @@ import cv2, numpy
 server_ip = ('0.0.0.0',12000)
 car_ip = ('0.0.0.0',12001)
 
-# ClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) UDP Route
-ClientSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP Route
+ClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP Route
 ClientSock.bind(server_ip)
 
 
 
 def receivearray():
-    ClientSock.listen(1)
-    conn, addr = ClientSock.accept()
     img = bytearray()
     np_tile = [numpy.empty((90,80,3),dtype=numpy.uint8)]*8
     pervious_index = 0
     while True:
-        package = conn.recv(65536)
+        package = ClientSock.recvfrom(65536)[0]
         index = int.from_bytes(package[:1],'big')
         if index < 8:
             if pervious_index != index:#new tile
@@ -38,10 +35,6 @@ def receivearray():
                 img = bytearray()#reset img for next tile
             pervious_index = index
             img = img + package[1:]
-
-
-    imgdata = eval(data.decode())
-    cv2.imshow("test", imgdata)
 
 
 
