@@ -4,6 +4,7 @@ import io
 import BobRC
 from picamera2 import Picamera2
 import cv2, numpy
+import struct
 
 
 
@@ -16,29 +17,6 @@ car_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # Global Socket vari
 print("server port bound")
 
 
-
-def send_array():
-    tilex=4#count tiles in x
-    tiley=2#count tiles in y
-    picam2 = Picamera2()
-    
-    video_config = picam2.create_preview_configuration({"size": (320, 180)})
-    picam2.configure(video_config)
-    picam2.start()
-    buffer = io.BytesIO()
-    time.sleep(1)
-    # car_sock.connect(client_address)
-    while True:
-        arraydata = picam2.capture_array()
-        img = cv2.resize(arraydata, (320, 180))
-        img=img.reshape(tiley, int(img.shape[0]/tiley), tilex, int(img.shape[1]/tilex), 4).swapaxes(1,2)
-        for id_img_row, img_row in enumerate(img):
-            for id_img_tile, img_tile in enumerate(img_row):
-                webp_image = (cv2.imencode('.webp',img_tile,[int(cv2.IMWRITE_WEBP_QUALITY),90])[1])
-                udp_packages = numpy.array_split(webp_image,len(webp_image)/500+1) #split into 500 byte chunks
-                for package in udp_packages:
-                    car_sock.sendto((id_img_tile+id_img_row*4).to_bytes(1,'big')+package.tobytes(), client_address)
-
 def send_video():
     picam2 = Picamera2()
     video_config = picam2.create_preview_configuration({"size": (320, 180)})
@@ -47,13 +25,13 @@ def send_video():
     time.sleep(1)
     while True:
         img_array = picam2.capture_array()
-        img_str = img_array.flatten().tostring()
-        print(len(img_str))
-        for i in range(10):
-            msg_len = int(len(img_str) / 10)
+        img_list = img_array.reshape(2, 90, 4, 80, 4).swapaxes(1,2)
 
-            car_sock.sendto(img_str[msg_len * i : msg_len * (i + 1)], client_address)
-        time.sleep(1)
+        for i, imgrow in enumerate(img_list):
+            for j, im_tile in enumerate(imgrow):
+                img_split_jpg = cv2.imencode('.webp', im_tile, [int(cv2.IMWRITE_WEBP_QUALITY),90])[1]
+                car_sock.sendto(struct.pack("B", 4*i +j) + img_split_jpg.tobytes(), client_address)
+
         
 
 if (__name__ == "__main__"):
