@@ -47,10 +47,10 @@ class CarSpeed:
         return True
     
     def to_bytes(self):
-        return struct.pack("b", self.speed, self.direction)
+        return struct.pack("2b", self.speed, self.direction)
     
     def from_bytes(self, data):
-        self.speed, self.direction = struct.unpack("b", data)
+        self.speed, self.direction = struct.unpack("2b", data)
 
     def set_pins(self, motor1a, motor1b, enable1, motor2a, motor2b, enable2):
         import RPi.GPIO as GPIO
