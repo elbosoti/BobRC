@@ -44,8 +44,4 @@ class CarSpeed:
         return struct.pack("b", self.speed, self.direction)
     
     def from_bytes(self, data):
-        speed, direction = struct.unpack("b", data)
-        rc_car = CarSpeed()
-        rc_car.speed = self.speed
-        rc_car.direction = self.direction
-        return rc_car
+        self.speed, self.direction = struct.unpack("b", data)
