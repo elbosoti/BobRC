@@ -35,6 +35,7 @@ class CarSpeed:
             self.direction = 0
         else:
             return False
+        print("Speed: ", self.speed, " Direction: ", self.direction)
         return True
     
     def key_depress(self, key):
@@ -70,11 +71,11 @@ class CarSpeed:
     
     def update_motors(self):
         import RPi.GPIO as GPIO
-        if self.speed < 0:
+        if self.speed > 0:
             GPIO.output(self.enable1, 1)
             GPIO.output(self.motor1a, 0)
             GPIO.output(self.motor1b, 1)
-        elif self.speed > 0:
+        elif self.speed < 0:
             GPIO.output(self.enable1, 1)
             GPIO.output(self.motor1a, 1)
             GPIO.output(self.motor1b, 0)
@@ -83,11 +84,11 @@ class CarSpeed:
             GPIO.output(self.motor1a, 0)
             GPIO.output(self.motor1b, 0)
         
-        if self.direction < 0:
+        if self.direction > 0:
             GPIO.output(self.enable2, 1)
             GPIO.output(self.motor2a, 0)
             GPIO.output(self.motor2b, 1)
-        elif self.direction > 0:
+        elif self.direction < 0:
             GPIO.output(self.enable2, 1)
             GPIO.output(self.motor2a, 1)
             GPIO.output(self.motor2b, 0)
