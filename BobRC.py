@@ -14,6 +14,12 @@ class CarSpeed:
     def __init__(self):
         self.speed = 0
         self.direction = 0
+        #self.motor1a = 0
+        #self.motor1b = 0
+        #self.enable1 = 0
+        #self.motor2a = 0
+        #self.motor2b = 0
+        #self.enable2 = 0
     
     def key_press(self, key):
         if key == 'w':
@@ -45,3 +51,47 @@ class CarSpeed:
     
     def from_bytes(self, data):
         self.speed, self.direction = struct.unpack("b", data)
+
+    def set_pins(self, motor1a, motor1b, enable1, motor2a, motor2b, enable2):
+        import RPi.GPIO as GPIO
+        GPIO.setmode(GPIO.BOARD)
+        self.motor1a = motor1a
+        self.motor1b = motor1b
+        self.enable1 = enable1
+        self.motor2a = motor2a
+        self.motor2b = motor2b
+        self.enable2 = enable2
+        GPIO.setup(motor1a, GPIO.OUT)
+        GPIO.setup(motor1b, GPIO.OUT)
+        GPIO.setup(enable1, GPIO.OUT)
+        GPIO.setup(motor2a, GPIO.OUT)
+        GPIO.setup(motor2b, GPIO.OUT)
+        GPIO.setup(enable2, GPIO.OUT)
+    
+    def update_motors(self):
+        import RPi.GPIO as GPIO
+        if self.speed < 0:
+            GPIO.output(self.enable1, 1)
+            GPIO.output(self.motor1a, 0)
+            GPIO.output(self.motor1b, 1)
+        elif self.speed > 0:
+            GPIO.output(self.enable1, 1)
+            GPIO.output(self.motor1a, 1)
+            GPIO.output(self.motor1b, 0)
+        else:
+            GPIO.output(self.enable1, 0)
+            GPIO.output(self.motor1a, 0)
+            GPIO.output(self.motor1b, 0)
+        
+        if self.direction < 0:
+            GPIO.output(self.enable2, 1)
+            GPIO.output(self.motor2a, 0)
+            GPIO.output(self.motor2b, 1)
+        elif self.direction > 0:
+            GPIO.output(self.enable2, 1)
+            GPIO.output(self.motor2a, 1)
+            GPIO.output(self.motor2b, 0)
+        else:
+            GPIO.output(self.enable2, 0)
+            GPIO.output(self.motor2a, 0)
+            GPIO.output(self.motor2b, 0)

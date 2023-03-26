@@ -5,7 +5,7 @@ import cv2, numpy
 import pygame
 
 server_ip = ('0.0.0.0',12000)
-car_ip = ('0.0.0.0',12001)
+car_ip = ('10.14.1.11',12000)
 
 client_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #UDP Route
 client_sock.bind(server_ip)
@@ -15,7 +15,17 @@ def receive_video():
     screen = pygame.display.set_mode((640, 360))
     pygame.display.set_caption("BobRC")
     img_tiles = [numpy.empty((90, 80, 3),dtype=numpy.uint8)]*8
+    rc_car = BobRC.CarSpeed()
     while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                rc_car.key_press(event.key)
+            elif event.type == pygame.KEYUP:
+                rc_car.key_depress(event.key)
+        client_sock.sendto(rc_car.to_bytes(), car_ip)
         package, addr = client_sock.recvfrom(65536)
         #index = struct.unpack("B",package[:1])[0]
         index, img = BobRC.process_package(package)
