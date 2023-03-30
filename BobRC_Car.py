@@ -41,5 +41,5 @@ if (__name__ == "__main__"):
     controls = threading.Thread(target=receive_controls)
     video = threading.Thread(target=send_video)
     controls.start()
-    video.start()
+    # video.start()
     

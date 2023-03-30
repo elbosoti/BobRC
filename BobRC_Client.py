@@ -1,7 +1,7 @@
 import socket
 import BobRC
 import cv2, numpy
-
+import time
 import pygame
 
 server_ip = ('0.0.0.0',12000)
@@ -22,12 +22,12 @@ def receive_video():
                 pygame.quit()
                 quit()
             elif event.type == pygame.KEYDOWN:
-                rc_car.key_press(event.key)
+                print("Key pressed: ", event.key)
+                rc_car.key_press(pygame.key.name(event.key))
             elif event.type == pygame.KEYUP:
-                rc_car.key_depress(event.key)
-        client_sock.sendto(rc_car.to_bytes(), car_ip)
+                rc_car.key_depress(pygame.key.name(event.key))
+            client_sock.sendto(rc_car.to_bytes(), car_ip)
         package, addr = client_sock.recvfrom(65536)
-        #index = struct.unpack("B",package[:1])[0]
         index, img = BobRC.process_package(package)
         if index != -1:
             img_tiles[index] = img
@@ -39,8 +39,25 @@ def receive_video():
                 surf = pygame.surfarray.make_surface(img)
                 screen.blit(surf, (0,0))
                 pygame.display.update()
-
+`
+def send__only_controls():
+    pygame.init()
+    screen = pygame.display.set_mode((640, 360))
+    rc_car = BobRC.CarSpeed()
+    while True:
+        time.sleep(0.03)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            elif event.type == pygame.KEYDOWN:
+                print("Key pressed: ", event.key)
+                rc_car.key_press(pygame.key.name(event.key))
+            elif event.type == pygame.KEYUP:
+                rc_car.key_depress(pygame.key.name(event.key))
+            client_sock.sendto(rc_car.to_bytes(), car_ip)
 
 
 if __name__ == "__main__":
-    receive_video()
+    # receive_video()
+    send__only_controls()
