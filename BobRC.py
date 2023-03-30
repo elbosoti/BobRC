@@ -52,6 +52,7 @@ class CarSpeed:
     
     def from_bytes(self, data):
         self.speed, self.direction = struct.unpack("2b", data)
+        print("Speed: ", self.speed, " Direction: ", self.direction)
 
     def set_pins(self, motor1a, motor1b, enable1, motor2a, motor2b, enable2):
         import RPi.GPIO as GPIO
