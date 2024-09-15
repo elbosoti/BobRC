@@ -1,0 +1,22 @@
+{
+  "name": "bobrc",
+  "version": "1.0.0",
+  "description": "Project to control an RC car using wifi or LTE",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elbosoti/BobRC.git"
+  },
+  "author": "Bob Blinde",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/elbosoti/BobRC/issues"
+  },
+  "homepage": "https://github.com/elbosoti/BobRC#readme",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}
